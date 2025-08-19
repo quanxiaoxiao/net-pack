@@ -65,36 +65,58 @@ export default () => {
     },
   ];
 
-  const walk = (handlerArray, payload) => {
+  function hasEnoughData(requiredSize) {
+    return state.size - state.offset >= requiredSize && state.size > state.offset;
+  }
+
+  function processStaticHandler(handler, payload) {
+    const size = typeof handler.size === 'function' ? handler.size(payload) : handler.size;
+    if (!hasEnoughData(size)) {
+      return false;
+    }
+    const dataSlice = state.buf.subarray(state.offset, state.offset + size);
+    handler.fn(dataSlice, payload);
+    state.offset += size;
+    payload.index ++;
+    return true;
+  }
+
+  function processDynamicHandler(handler, payload) {
+    const subArr = handler(payload);
+    if (!payload.payload) {
+      state.depth ++;
+      payload.payload = {
+        index: 0,
+      };
+    }
+    if (state.size === state.offset) {
+      return false;
+    }
+    walk(subArr, payload.payload); // eslint-disable-line no-use-before-define
+    if (payload.payload.index === subArr.length) {
+      state.depth --;
+      payload.index ++;
+    }
+    return true;
+  }
+
+  function processHandler(handler, payload) {
+    if (typeof handler === 'function') {
+      return processDynamicHandler(handler, payload);
+    }
+    return processStaticHandler(handler, payload);
+  }
+
+  function walk(handlerArray, payload) {
     while (payload.index < handlerArray.length) {
       const handler = handlerArray[payload.index];
-      if (typeof handler === 'function') {
-        const subArr = handler(payload);
-        if (!payload.payload) {
-          state.depth += 1;
-          payload.payload = {
-            index: 0,
-          };
-        }
-        if (state.size === state.offset) {
-          break;
-        }
-        walk(subArr, payload.payload);
-        if (payload.payload.index === subArr.length) {
-          state.depth -= 1;
-          payload.index += 1;
-        }
-      } else {
-        const size = typeof handler.size === 'function' ? handler.size(payload) : handler.size;
-        if (state.size - state.offset < size || state.size === state.offset) {
-          break;
-        }
-        handler.fn(state.buf.slice(state.offset, state.offset + size), payload);
-        state.offset += size;
-        payload.index += 1;
+      const success = processHandler(handler, payload);
+      if (!success) {
+        return true;
       }
     }
-  };
+    return false;
+  }
 
   const run = (handlerArray, payload, depth) => {
     if (depth === 0) {
