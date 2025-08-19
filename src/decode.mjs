@@ -123,16 +123,12 @@ export default () => {
     if (!Buffer.isBuffer(chunk)) {
       throw new Error('Invalid chunk: must be a Buffer');
     }
-    const len = chunk.length;
-    if (len > 0) {
-      state.size += len;
-      state.buf = Buffer.concat([
-        state.buf,
-        chunk,
-      ], state.size);
+    if (chunk.length > 0) {
+      state.size += chunk.length;
+      state.buf = Buffer.concat([state.buf, chunk], state.size);
     }
     run(procedure, state.payload, state.depth);
-    if (state.payload.index === procedure.length && state.depth === 0) {
+    if (isComplete()) {
       return {
         payload: state.payload,
         buf: state.buf.slice(state.offset),
