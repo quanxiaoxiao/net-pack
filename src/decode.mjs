@@ -65,9 +65,9 @@ export default () => {
     },
   ];
 
-  const walk = (arr, payload) => {
-    while (payload.index < arr.length) {
-      const handler = arr[payload.index];
+  const walk = (handlerArray, payload) => {
+    while (payload.index < handlerArray.length) {
+      const handler = handlerArray[payload.index];
       if (typeof handler === 'function') {
         const subArr = handler(payload);
         if (!payload.payload) {
