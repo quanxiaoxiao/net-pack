@@ -98,18 +98,16 @@ export default () => {
 
   const run = (arr, payload, depth) => {
     if (depth === 0) {
-      walk(arr, payload);
-    } else {
-      const subArr = arr[payload.index](payload);
-      const subPayload = payload.payload;
-      if (subArr.length === subPayload.index) {
-        payload.index += 1;
-        state.depth -= 1;
-        walk(arr, payload);
-      } else {
-        run(subArr, subPayload, depth - 1);
-      }
+      return walk(arr, payload);
     }
+    const subArr = arr[payload.index](payload);
+    const subPayload = payload.payload;
+    if (subArr.length === subPayload.index) {
+      payload.index += 1;
+      state.depth -= 1;
+      return walk(arr, payload);
+    }
+    return run(subArr, subPayload, depth - 1);
   };
 
   const isComplete = () => {
@@ -128,6 +126,7 @@ export default () => {
       state.buf = Buffer.concat([state.buf, chunk], state.size);
     }
     run(procedure, state.payload, state.depth);
+
     if (isComplete()) {
       return {
         payload: state.payload,
