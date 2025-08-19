@@ -110,9 +110,13 @@ export default () => {
     }
   };
 
+  const isComplete = () => {
+    return state.payload.index === procedure.length && state.depth === 0;
+  };
+
   return (chunk) => {
-    if (state.index === procedure.length && state.depth === 0) {
-      throw new Error('already complete');
+    if (isComplete()) {
+      throw new Error('Parser already completed');
     }
     if (!Buffer.isBuffer(chunk)) {
       throw new Error('chunk invalid');
