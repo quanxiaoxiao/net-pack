@@ -96,18 +96,22 @@ export default () => {
     }
   };
 
-  const run = (arr, payload, depth) => {
+  const run = (handlerArray, payload, depth) => {
     if (depth === 0) {
-      return walk(arr, payload);
+      return walk(handlerArray, payload);
     }
-    const subArr = arr[payload.index](payload);
-    const subPayload = payload.payload;
-    if (subArr.length === subPayload.index) {
-      payload.index += 1;
-      state.depth -= 1;
-      return walk(arr, payload);
+    const currentHandler = handlerArray[payload.index];
+    if (typeof currentHandler === 'function') {
+      const subArr = currentHandler(payload);
+      const subPayload = payload.payload;
+      if (subArr.length === subPayload.index) {
+        payload.index ++;
+        state.depth --;
+        return walk(handlerArray, payload);
+      }
+      return run(subArr, subPayload, depth - 1);
     }
-    return run(subArr, subPayload, depth - 1);
+    return walk(currentHandler, payload);
   };
 
   const isComplete = () => {
