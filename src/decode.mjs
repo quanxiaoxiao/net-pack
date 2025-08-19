@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer';
+
 import { CURRENT_VERSION } from './constants.mjs';
 import {
   calcPackHash,
@@ -119,7 +121,7 @@ export default () => {
       throw new Error('Parser already completed');
     }
     if (!Buffer.isBuffer(chunk)) {
-      throw new Error('chunk invalid');
+      throw new Error('Invalid chunk: must be a Buffer');
     }
     const len = chunk.length;
     if (len > 0) {
