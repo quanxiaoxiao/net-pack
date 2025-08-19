@@ -1,21 +1,24 @@
+import assert from 'node:assert';
+import { Buffer } from 'node:buffer';
 import crypto from 'node:crypto';
-import test from 'ava'; // eslint-disable-line
-import { TYPE_REQUEST_CONNECT } from '../src/constants.mjs';
+import test from 'node:test';
+
+import decode from '../src/decode.mjs';
 import {
   pack,
   packStrLen,
 } from '../src/pack.mjs';
-import decode from '../src/decode.mjs';
+import { TYPE_REQUEST_CONNECT } from './constants.mjs';
 
-test('encode', (t) => {
+test('encode', () => {
   let execute = decode();
   execute(Buffer.from([0]));
-  t.throws(() => {
+  assert.throws(() => {
     execute(Buffer.from([2]));
   });
   execute = decode();
   execute(Buffer.from([0, 1]));
-  t.throws(() => {
+  assert.throws(() => {
     execute(Buffer.from([99]));
   });
   execute = decode();
@@ -45,10 +48,10 @@ test('encode', (t) => {
     subHash,
   ])).digest();
   let ret = execute(hash.slice(0, 3));
-  t.is(ret, null);
+  assert.equal(ret, null);
   ret = execute(hash.slice(3));
-  t.is(ret.payload.type, 1);
-  t.is(ret.payload.version, 1);
+  assert.equal(ret.payload.type, 1);
+  assert.equal(ret.payload.version, 1);
   execute = decode();
   ret = execute(Buffer.concat([
     version,
@@ -58,9 +61,9 @@ test('encode', (t) => {
     subHash,
     hash,
   ]));
-  t.is(ret.payload.type, 1);
-  t.is(ret.payload.version, 1);
-  t.is(ret.buf.length, 0);
+  assert.equal(ret.payload.type, 1);
+  assert.equal(ret.payload.version, 1);
+  assert.equal(ret.buf.length, 0);
   execute = decode();
   ret = execute(Buffer.concat([
     version,
@@ -70,16 +73,16 @@ test('encode', (t) => {
     subHash,
     hash.slice(0, 4),
   ]));
-  t.is(ret, null);
+  assert.equal(ret, null);
   ret = execute(Buffer.concat([
     hash.slice(4),
     Buffer.from('aaa'),
   ]));
-  t.is(ret.payload.payload.identifierSize, id.length);
-  t.is(ret.buf.toString(), 'aaa');
+  assert.equal(ret.payload.payload.identifierSize, id.length);
+  assert.equal(ret.buf.toString(), 'aaa');
 });
 
-test('2', (t) => {
+test('2', () => {
   const _id = 'bbbbb';
   const portBuf = Buffer.allocUnsafe(2);
   portBuf.writeUInt16BE(66);
@@ -93,6 +96,6 @@ test('2', (t) => {
     ]),
   });
   const ret = decode()(chunk);
-  t.is(ret.payload.payload.hostname, hostname);
-  t.is(ret.payload.payload.port, 66);
+  assert.equal(ret.payload.payload.hostname, hostname);
+  assert.equal(ret.payload.payload.port, 66);
 });

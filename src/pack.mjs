@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+
 import {
   CURRENT_VERSION,
   TYPE_ERROR_REPORT,

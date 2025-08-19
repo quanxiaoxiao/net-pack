@@ -1,18 +1,18 @@
 import {
-  TYPE_SUBSCRIBER,
   TYPE_CREATE_CONNECT,
-  TYPE_REQUEST_CONNECT,
-  TYPE_PIPE_CONNECT,
-  TYPE_QUERY_STATE,
-  TYPE_PING,
-  TYPE_PONG,
-  TYPE_RESULT_STATE,
   TYPE_ERROR_REPORT,
+  TYPE_PING,
+  TYPE_PIPE_CONNECT,
+  TYPE_PONG,
+  TYPE_QUERY_STATE,
+  TYPE_REQUEST_CONNECT,
+  TYPE_RESULT_STATE,
+  TYPE_SUBSCRIBER,
 } from '../constants.mjs';
 import {
   calcHash,
-  packStrLen,
   checkHash,
+  packStrLen,
 } from '../pack.mjs';
 
 export default {
