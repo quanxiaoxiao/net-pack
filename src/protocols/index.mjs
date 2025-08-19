@@ -1,3 +1,5 @@
+import { enpack } from '@quanxiaoxiao/bytes';
+
 import {
   TYPE_CREATE_CONNECT,
   TYPE_ERROR_REPORT,
@@ -12,7 +14,6 @@ import {
 import {
   calcHash,
   checkHash,
-  packStrLen,
 } from '../pack.mjs';
 
 export default {
@@ -32,7 +33,7 @@ export default {
     {
       size: 32,
       fn: (buf, payload) => {
-        const hash = calcHash(packStrLen(payload.identifier, 1));
+        const hash = calcHash(enpack(payload.identifier, 1));
         checkHash(hash, buf);
         payload.hash = hash;
       },
@@ -79,8 +80,8 @@ export default {
         const portBuf = Buffer.allocUnsafe(2);
         portBuf.writeUInt16BE(payload.port);
         const hash = calcHash(Buffer.concat([
-          packStrLen(payload.identifier, 1),
-          packStrLen(payload.hostname, 1),
+          enpack(payload.identifier, 1),
+          enpack(payload.hostname, 1),
           portBuf,
         ]));
         checkHash(hash, buf);
@@ -125,8 +126,8 @@ export default {
         const portBuf = Buffer.allocUnsafe(2);
         portBuf.writeUInt16BE(payload.port);
         const hash = calcHash(Buffer.concat([
-          packStrLen(payload.identifier, 1),
-          packStrLen(payload.hostname, 1),
+          enpack(payload.identifier, 1),
+          enpack(payload.hostname, 1),
           portBuf,
         ]));
         checkHash(hash, buf);
@@ -150,7 +151,7 @@ export default {
     {
       size: 32,
       fn: (buf, payload) => {
-        const hash = calcHash(packStrLen(payload.identifier, 1));
+        const hash = calcHash(enpack(payload.identifier, 1));
         checkHash(hash, buf);
         payload.hash = hash;
       },
@@ -229,7 +230,7 @@ export default {
     {
       size: 32,
       fn: (buf, payload) => {
-        const hash = calcHash(packStrLen(payload.data, 4));
+        const hash = calcHash(enpack(payload.data, 4));
         checkHash(hash, buf);
         payload.hash = hash;
       },
@@ -251,7 +252,7 @@ export default {
     {
       size: 32,
       fn: (buf, payload) => {
-        const hash = calcHash(packStrLen(payload.message, 2));
+        const hash = calcHash(enpack(payload.message, 2));
         checkHash(hash, buf);
         payload.hash = hash;
       },

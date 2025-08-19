@@ -18,7 +18,6 @@ import {
   pack,
   packErrorReport,
   packPort,
-  packStrLen,
 } from './pack.mjs';
 
 export {
@@ -30,7 +29,6 @@ export {
   pack,
   packErrorReport,
   packPort,
-  packStrLen,
   TYPE_CREATE_CONNECT,
   TYPE_ERROR_REPORT,
   TYPE_PING,

@@ -3,11 +3,10 @@ import { Buffer } from 'node:buffer';
 import crypto from 'node:crypto';
 import test from 'node:test';
 
+import { enpack } from '@quanxiaoxiao/bytes';
+
 import decode from '../src/decode.mjs';
-import {
-  pack,
-  packStrLen,
-} from '../src/pack.mjs';
+import { pack } from '../src/pack.mjs';
 import { TYPE_REQUEST_CONNECT } from './constants.mjs';
 
 test('encode', () => {
@@ -90,8 +89,8 @@ test('2', () => {
   const chunk = pack({
     type: TYPE_REQUEST_CONNECT,
     payload: Buffer.concat([
-      packStrLen(_id, 1),
-      packStrLen(hostname, 1),
+      enpack(_id, 1),
+      enpack(hostname, 1),
       portBuf,
     ]),
   });

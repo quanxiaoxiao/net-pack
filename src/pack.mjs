@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
 
+import { enpack } from '@quanxiaoxiao/bytes';
+
 import {
   CURRENT_VERSION,
   TYPE_ERROR_REPORT,
@@ -32,40 +34,6 @@ export const checkHash = (a, b) => {
   }
 };
 
-export const packStrLen = (str, size = 1) => {
-  if (typeof str !== 'string') {
-    throw new Error('content is not string');
-  }
-  if (size > 4) {
-    throw new Error(`\`${size}\` exceed max size`);
-  }
-  const buf = Buffer.from(str);
-  const len = buf.length;
-  const bufLength = Buffer.allocUnsafe(size);
-  if (len > 2147483647) {
-    throw new Error('content size execute 2147483647');
-  }
-  if (size === 1) {
-    if (len > 255) {
-      throw new Error('content size execute 255');
-    }
-    bufLength.writeUInt8(buf.length);
-  } else if (size === 2) {
-    if (len > 65535) {
-      throw new Error('content size execute 65535');
-    }
-    bufLength.writeUInt16BE(buf.length);
-  } else if (size === 4) {
-    bufLength.writeUInt32BE(buf.length);
-  } else {
-    throw new Error(`\`${size}\` unable handle`);
-  }
-  return Buffer.concat([
-    bufLength,
-    buf,
-  ]);
-};
-
 export const packPort = (port) => {
   const portBuf = Buffer.allocUnsafe(2);
   portBuf.writeUInt16BE(port);
@@ -95,5 +63,5 @@ export const pack = ({
 
 export const packErrorReport = (message) => pack({
   type: TYPE_ERROR_REPORT,
-  payload: packStrLen(message, 2),
+  payload: enpack(message, 2),
 });

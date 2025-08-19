@@ -18,5 +18,8 @@
   },
   "engines": {
     "node": ">= 20.0.0"
+  },
+  "dependencies": {
+    "@quanxiaoxiao/bytes": "^0.5.0"
   }
 }
